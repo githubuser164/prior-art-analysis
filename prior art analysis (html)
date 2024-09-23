@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Flowchart</title>
+    <script type="module">
+        // Load Mermaid.js
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true });
+
+        // Function to display additional info
+        function showInfo(content) {
+            const infoBox = document.getElementById('info-box');
+            infoBox.innerText = content;
+            infoBox.style.display = 'block';
+        }
+
+        // Add event listeners to flowchart nodes once Mermaid has rendered the chart
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('g.node').forEach(node => {
+                node.addEventListener('click', () => {
+                    const nodeId = node.id;
+                    switch (nodeId) {
+                        case 'Q1':
+                            showInfo('Explanation of publicly available reference.');
+                            break;
+                        case 'Q2':
+                            showInfo('Explanation of availability before the effective filing date.');
+                            break;
+                        // Add more cases for other nodes
+                        default:
+                            showInfo('No additional information for this node.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <style>
+        /* Style for flowchart container */
+        .mermaid {
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        /* Style for info box */
+        #info-box {
+            display: none;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 20px;
+        }
+
+        /* Optional: Style flowchart nodes or lines */
+        .node {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Patent Flowchart</h1>
+
+    <!-- Flowchart Container -->
+    <div class="mermaid">
+        graph TD
+            %% Question 1
+            Q1[Was the reference or disclosure publicly available before the effective filing date?] --> |Yes| Q2
+            Q1 --> |No: not prior art under 102a1 or 102a2| Q5
+
+            %% Question 2
+            Q2[Was the reference or disclosure available more than 1 year before the effective filing date?] --> |Yes: Prior Art under 102a1| PriorArt
+            Q2 --> |No| Q3
+
+            %% Question 3
+            Q3[Was the disclosure made by the inventor, joint inventor, or someone who obtained it from the inventor?] --> |Yes: 102b1A exception| Q5
+            Q3 --> |No| Q4
+
+            %% Question 4
+            Q4[Had the subject matter been publicly disclosed by the inventor or someone else before the disclosure?] --> |Yes: 102b1B exception| Q5
+            Q4 --> |No: prior art under 102a1| PriorArt
+
+            %% Question 5
+            Q5[Is the reference a US patent, US patent application, or PCT application designating the US?] --> |Yes| Q6
+            Q5 --> |No: not prior art under 102a1 or 102a2| NotPriorArt
+
+            %% Question 6
+            Q6[Was the reference effectively filed before the claimed invention?] --> |No: not prior art under 102a1 or 102a2| NotPriorArt
+            Q6 --> |Yes| Q7
+
+            %% Question 7
+            Q7[Was the disclosure made by the inventor, joint inventor, or someone who obtained it from the inventor?] --> |Yes: 102b2A exception| NotPriorArt
+            Q7 --> |No| Q8
+
+            %% Question 8
+            Q8[Had the subject matter been publicly disclosed by the inventor before it was effectively filed?] --> |Yes: 102b2B exception| NotPriorArt
+            Q8 --> |No| Q9
+
+            %% Question 9
+            Q9[Was the subject matter owned by the same person or subject to an assignment obligation?] --> |Yes: 102b2C exception| NotPriorArt
+            Q9 --> |No| Q10
+
+            %% Question 10
+            Q10[Was the subject matter developed under a joint research agreement?] --> |No: prior art under 102a2| PriorArt
+            Q10 --> |Yes| Q11
+
+            %% Question 11
+            Q11[Was the claimed invention made within the scope of the joint research agreement?] --> |No: prior art under 102a2| PriorArt
+            Q11 --> |Yes| Q12
+
+            %% Question 12
+            Q12[Does the application disclose or was it amended to disclose the parties to the joint research agreement?] --> |No: prior art under 102a2| PriorArt
+            Q12 --> |Yes: 102b2C exception| NotPriorArt
+
+            %% Single Prior Art Node
+            PriorArt[Prior Art]
+
+            %% Single Not Prior Art Node
+            NotPriorArt[Not Prior Art]
+    </div>
+
+    <!-- Info Box for explanations -->
+    <div id="info-box"></div>
+
+</body>
+</html>
